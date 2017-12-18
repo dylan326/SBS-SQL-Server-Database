@@ -39,78 +39,78 @@ BEGIN
 		INSERT INTO person (person_type_id, first_name, last_name, ss#)
 		VALUES (@person_type_id, @first_name, @last_name, @ss#)
 	END
-    SET @person_id = (SELECT person_id 
+        SET @person_id = (SELECT person_id 
 	                  FROM person 
-					  WHERE first_name = @first_name AND last_name = @last_name AND ss# = @ss#)
+			  WHERE first_name = @first_name AND last_name = @last_name AND ss# = @ss#)
 			
 	IF NOT EXISTS (SELECT phone_id 
 	               FROM phone
-				   WHERE person_id = @person_id AND phone_number = @phone_number)
+		       WHERE person_id = @person_id AND phone_number = @phone_number)
 	BEGIN
 		INSERT INTO phone(phone_type_id, person_id, phone_number)
 		VALUES(@phone_type_id, @person_id, @phone_number)
 	END
 	IF NOT EXISTS (SELECT email_id 
 	               FROM email
-				   WHERE person_id = @person_id AND email = @email)
+		       WHERE person_id = @person_id AND email = @email)
 	BEGIN
 		INSERT INTO email(email_type_id, person_id, email) 
 		VALUES (@email_type_id, @person_id, @email)
 	END
 	IF NOT EXISTS (SELECT address_id 
 	                   FROM address 
-					   WHERE address_type_id = @address_type_id AND state_type_id = @state_type_id AND city = @city AND country = @country AND street = @street AND zip = @zip)
-    BEGIN
- 		INSERT INTO address(address_type_id, state_type_id, city, country, street, zip) 
-        VALUES(@address_type_id, @state_type_id, @city, @country, @street, @zip)
+			   WHERE address_type_id = @address_type_id AND state_type_id = @state_type_id AND city = @city AND country = @country AND street = @street AND zip = @zip)
+        BEGIN
+    		INSERT INTO address(address_type_id, state_type_id, city, country, street, zip) 
+        	VALUES(@address_type_id, @state_type_id, @city, @country, @street, @zip)
 	END
-    SET @address_id = (SELECT address_id 
+        SET @address_id = (SELECT address_id 
 	                   FROM address 
-					   WHERE address_type_id = @address_type_id AND state_type_id = @state_type_id AND city = @city AND country = @country AND street = @street AND zip = @zip)
+			   WHERE address_type_id = @address_type_id AND state_type_id = @state_type_id AND city = @city AND country = @country AND street = @street AND zip = @zip)
 		
 	IF @yearly_pay = 0.00
 		BEGIN
 			IF NOT EXISTS (SELECT pay_id 
-	                       FROM pay
-					       WHERE  pay_type_id = @pay_type_id and hourly_rate = @hourly_rate)
-		    BEGIN
+	                               FROM pay
+				       WHERE  pay_type_id = @pay_type_id and hourly_rate = @hourly_rate)
+		       BEGIN
 				INSERT INTO pay(pay_type_id, hourly_rate, yearly_pay)
 				VALUES (@pay_type_id, @hourly_rate, @yearly_pay)
 			END
 			SET @pay_id = (SELECT pay_id 
-						   FROM pay 
-				           WHERE pay_type_id = @pay_type_id and hourly_rate = @hourly_rate)
+				       FROM pay 
+				       WHERE pay_type_id = @pay_type_id and hourly_rate = @hourly_rate)
 		END
 	ELSE
 		BEGIN
 			IF NOT EXISTS (SELECT pay_id 
-	                       FROM pay
-					       WHERE  pay_type_id = @pay_type_id and yearly_pay = @yearly_pay)
+	                               FROM pay
+				       WHERE  pay_type_id = @pay_type_id and yearly_pay = @yearly_pay)
 			BEGIN
 				INSERT INTO pay(pay_type_id, hourly_rate, yearly_pay)
 				VALUES (@pay_type_id, @hourly_rate, @yearly_pay)
 			END
 			SET @pay_id = (SELECT pay_id 
-				   FROM pay 
-				   WHERE pay_type_id = @pay_type_id and yearly_pay = @yearly_pay )
+				       FROM pay 
+				        WHERE pay_type_id = @pay_type_id and yearly_pay = @yearly_pay )
 		END
 
 	IF NOT EXISTS (SELECT employee_id 
 	               FROM employee
-				   WHERE  employee_number = @employee_nuber)
+		       WHERE  employee_number = @employee_nuber)
 	BEGIN
 		INSERT INTO employee(employee_type_id, address_id, person_id, pay_id, employee_number) 
-        VALUES(@employee_type_id, @address_id, @person_id, @pay_id, @employee_nuber)
+        	VALUES(@employee_type_id, @address_id, @person_id, @pay_id, @employee_nuber)
 	END
 
 	IF @yearly_pay = 0.00
 	BEGIN
 		UPDATE pay SET yearly_pay = NULL WHERE yearly_pay = 0.00
-	PRINT 'you have added an hourly paid employee'
+		PRINT 'you have added an hourly paid employee'
 	END
 	ELSE 
 	BEGIN
 		UPDATE pay SET hourly_rate = NULL WHERE hourly_rate = 0.00
-	PRINT 'You have added a salaried employee'
+		PRINT 'You have added a salaried employee'
 	END	
 END
