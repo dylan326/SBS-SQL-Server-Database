@@ -23,8 +23,8 @@ CREATE TABLE #total
 	SELECT   j.job_name, jt.job_type_desc, d.distributor_name, p.part_name, p.price, t.totalPart
 	FROM     job j
 	         INNER JOIN job_type jt ON j.job_type_id = jt.job_type_id
-			 INNER JOIN part p ON j.job_id = p.job_id 
-			 INNER JOIN distributor d ON p.distributor_id = d.distributor_id
-			 RIGHT JOIN #total t on t.totalID = j.job_id
+		 INNER JOIN part p ON j.job_id = p.job_id 
+		 INNER JOIN distributor d ON p.distributor_id = d.distributor_id
+		 RIGHT JOIN #total t on t.totalID = j.job_id
 	WHERE    j.job_name LIKE '%' + @job_name +'%' AND jt.job_type_id = @job_type_id
 END
